@@ -48,6 +48,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_android:
+    dependency: transitive
+    description:
+      name: flutter_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.14"
+  flutter_opencv:
+    dependency: "direct main"
+    description:
+      name: flutter_opencv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -81,6 +95,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
+  platform:
+    dependency: transitive
+    description:
+      name: platform
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.0"
   quiver:
     dependency: transitive
     description:

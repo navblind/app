@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_opencv/opencv.dart' as cv;
+
 
 List<CameraDescription> cameras;
 
@@ -37,13 +40,14 @@ class _CameraAppState extends State<CameraApp> {
 
   @override
   Widget build(BuildContext context) {
+    controller.takePicture("image.jpg");
+    
     if (!controller.value.isInitialized) {
       return Container();
     }
+    
     return AspectRatio(
-        aspectRatio:
-        controller.value.aspectRatio,
+        aspectRatio: controller.value.aspectRatio,
         child: CameraPreview(controller));
   }
 }
-
