@@ -12,6 +12,14 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -27,11 +35,13 @@ import org.opencv.highgui.Highgui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOError;
+import java.io.IOException;
+
 
 import static org.opencv.core.CvType.CV_8UC3;
 
 
-public class MainActivity extends AppCompatActivity  implements  CameraBridgeViewBase.CvCameraViewListener2{
+public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     private static final String TAG = "MainActivity";
     JavaCameraView javaCameraView;
@@ -54,25 +64,26 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
-            switch(status){
-                case LoaderCallbackInterface.SUCCESS:
-                {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS: {
                     javaCameraView.enableView();
-                } break;
-                default:
-                {
+                }
+                break;
+                default: {
                     super.onManagerConnected(status);
-                } break;
+                }
+                break;
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},CAMERA_PERMISSION_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
 
         javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
@@ -81,21 +92,21 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        if(javaCameraView!=null)
+        if (javaCameraView != null)
             javaCameraView.disableView();
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        if(javaCameraView!=null)
+        if (javaCameraView != null)
             javaCameraView.disableView();
     }
 
     @Override
-    protected void  onResume(){
+    protected void onResume() {
 
         super.onResume();
         if (OpenCVLoader.initDebug()) {
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
 
     //        @Override
     public void onCameraViewStarted(int width, int height) {
-        frame=new Mat(height,width, CV_8UC3);
+        frame = new Mat(height, width, CV_8UC3);
 
     }
 
@@ -118,7 +129,7 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
         frame.release();
     }
 
-    public Bitmap getBmp(Mat tmp){
+    public Bitmap getBmp(Mat tmp) {
 
         Bitmap bmp = null;
         bmp = Bitmap.createBitmap(tmp.cols(), tmp.rows(), Bitmap.Config.ARGB_8888);
@@ -126,7 +137,8 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
 
         return bmp;
     }
-    public String getStringImage(Bitmap bmp){
+
+    public String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
@@ -142,13 +154,14 @@ public class MainActivity extends AppCompatActivity  implements  CameraBridgeVie
 
         String encodedImage = getStringImage(getBmp(frame));
         try {
-            Document doc = Jsoup.connect("http://192.168.250.1:5000/?img=" + encodedImage).get();
-            Elements ret = doc.select("#mp-itn b a");
-            System.out.println(ret.toString());
+            Document doc = Jsoup.connect("http://192.168.43.197:5000?img=" + encodedImage).userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:59.0) Gecko/20100101")
+                    .get();
+            String s = doc.text();
+            System.out.println(s);
         }
-        catch (java.io.IOException i){
+        catch(IOException e){
+            e.printStackTrace();
         }
-
 
         System.out.println(getBmp(frame));
 
